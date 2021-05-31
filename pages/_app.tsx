@@ -5,9 +5,11 @@ import Head from "next/head";
 import React, { useEffect } from "react";
 import { Footer, Page } from "../components";
 import { Header } from "../components/Header";
-import { LightTheme } from "../theme";
+import { LightTheme, useGlobalStyles } from "../theme";
 
 export default function App({ Component, pageProps }: AppProps) {
+    useGlobalStyles();
+
     useEffect(() => {
         const jssStyles = document.querySelector("#jss-server-side");
 
