@@ -52,9 +52,9 @@ export const RequestInviteModal: FC<RequestInviteModalProps> = ({
     };
 
     const onHandleExit = () => {
+        onExited(success);
         setSuccess(false);
         setError("");
-        onExited(success);
     };
 
     const onHandleClose = () => {
@@ -107,6 +107,9 @@ export const RequestInviteModal: FC<RequestInviteModalProps> = ({
                                 FormHelperTextProps={{
                                     variant: "standard"
                                 }}
+                                inputProps={{
+                                    "data-testid": "name"
+                                }}
                             />
                             <TextField
                                 className={classes.formControl}
@@ -124,6 +127,9 @@ export const RequestInviteModal: FC<RequestInviteModalProps> = ({
                                 helperText={touched.email && errors.email}
                                 FormHelperTextProps={{
                                     variant: "standard"
+                                }}
+                                inputProps={{
+                                    "data-testid": "email"
                                 }}
                             />
                             <TextField
@@ -146,6 +152,9 @@ export const RequestInviteModal: FC<RequestInviteModalProps> = ({
                                 }
                                 FormHelperTextProps={{
                                     variant: "standard"
+                                }}
+                                inputProps={{
+                                    "data-testid": "confirmEmail"
                                 }}
                             />
 
