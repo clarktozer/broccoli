@@ -1,16 +1,14 @@
 export interface RequestInviteModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSuccess: () => void;
-    onExited: (success: boolean) => void;
+    onSubmit: (values: RequestInviteFormValues) => void;
+    onExited: () => void;
+    isLoading?: boolean;
+    error?: string;
 }
 
 export interface RequestInviteFormValues {
     name: string;
     email: string;
     confirmEmail: string;
-}
-
-export interface ApiError {
-    errorMessage: string;
 }

@@ -5,72 +5,33 @@ import {
     DialogTitle,
     TextField
 } from "@material-ui/core";
-import axios from "axios";
 import { Formik } from "formik";
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import { OverlaySpinner } from "../../../OverlaySpinner";
-import { auth } from "./constants";
 import { useStyles } from "./styles";
-import { RequestInviteFormValues, RequestInviteModalProps } from "./types";
+import { RequestInviteModalProps } from "./types";
 import { requestInviteValidationSchema } from "./validation";
 
 export const RequestInviteModal: FC<RequestInviteModalProps> = ({
     isOpen,
     onClose,
-    onSuccess,
-    onExited
+    onExited,
+    onSubmit,
+    isLoading,
+    error
 }) => {
     const classes = useStyles();
-    const [isSubmitting, setSubmitting] = useState(false);
-    const [error, setError] = useState("");
-    const [success, setSuccess] = useState(false);
-
-    const onSubmit = async ({ name, email }: RequestInviteFormValues) => {
-        try {
-            setSuccess(false);
-            setSubmitting(true);
-            setError("");
-
-            const payload = {
-                name,
-                email
-            };
-
-            await axios.post<string>(auth, payload, {
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
-
-            onSuccess();
-            setSuccess(true);
-        } catch (error) {
-            setError(error.response.data.errorMessage);
-        } finally {
-            setSubmitting(false);
-        }
-    };
-
-    const onHandleExit = () => {
-        onExited(success);
-        setSuccess(false);
-        setError("");
-    };
-
-    const onHandleClose = () => {
-        onClose();
-    };
 
     return (
         <Dialog
-            onClose={onHandleClose}
+            onClose={onClose}
             open={isOpen}
-            onExited={onHandleExit}
+            onExited={onExited}
             PaperProps={{
                 className: classes.paper
             }}
         >
-            {isSubmitting && <OverlaySpinner />}
+            {isLoading && <OverlaySpinner />}
             <DialogTitle>Request an invite</DialogTitle>
             <DialogContent>
                 <Formik
@@ -157,22 +118,21 @@ export const RequestInviteModal: FC<RequestInviteModalProps> = ({
                                     "data-testid": "confirmEmail"
                                 }}
                             />
-
                             <div className={classes.submitButton}>
                                 <Button
                                     type="submit"
                                     color="primary"
                                     variant="contained"
-                                    disabled={isSubmitting}
+                                    disabled={isLoading}
                                     disableElevation
                                 >
                                     Send
                                 </Button>
-                                {error?.length > 0 && (
+                                {error && error.length > 0 ? (
                                     <div className={classes.error}>
                                         <i>{error}</i>
                                     </div>
-                                )}
+                                ) : null}
                             </div>
                         </form>
                     )}
