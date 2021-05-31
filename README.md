@@ -7,6 +7,12 @@ git clone the repo
 yarn
 ```
 
+## Tests
+
+```bash
+yarn test
+```
+
 ## Getting Started
 
 First, run the development server:
