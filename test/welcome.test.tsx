@@ -12,7 +12,11 @@ const formFields = () => ({
 test("rendering app", async () => {
     const { getByRole } = render(<Welcome />);
 
-    expect(getByRole("button")).toHaveTextContent("Request an invite");
+    expect(
+        getByRole("button", {
+            name: /request an invite/i
+        })
+    ).toBeInTheDocument();
 });
 
 test("rendering form and validation", async () => {
@@ -21,19 +25,12 @@ test("rendering form and validation", async () => {
     fireEvent.click(getByRole("button"));
     fireEvent.click(screen.getByText("Send"));
 
-    const emptyNameValidation = await screen.findByText(
-        "Please enter your full name!"
-    );
-    const emptyEmailValidation = await screen.findByText(
-        "Please enter your email address!"
-    );
-
-    expect(emptyNameValidation).toBeInTheDocument();
-    expect(emptyEmailValidation).toBeInTheDocument();
-
-    const { nameInput, emailInput } = formFields();
+    const { nameInput, emailInput, confirmEmailInput } = formFields();
 
     await waitFor(() => {
+        expect(nameInput).toHaveAttribute("aria-invalid", "true");
+        expect(emailInput).toHaveAttribute("aria-invalid", "true");
+
         fireEvent.change(nameInput, {
             target: { name: "name", value: "T" }
         });
@@ -43,21 +40,35 @@ test("rendering form and validation", async () => {
         });
     });
 
-    fireEvent.click(screen.getByText("Send"));
-
-    const minLengthNameValidation = await screen.findByText(
-        "Please enter more than 3 characters!"
-    );
-    const validEmailValidation = await screen.findByText(
-        "Please enter a valid email address!"
-    );
-    const matchEmailValidation = await screen.findByText(
-        "Your email address much match!"
+    fireEvent.click(
+        screen.getByRole("button", {
+            name: /send/i
+        })
     );
 
-    expect(minLengthNameValidation).toBeInTheDocument();
-    expect(validEmailValidation).toBeInTheDocument();
-    expect(matchEmailValidation).toBeInTheDocument();
+    await waitFor(() => {
+        expect(nameInput).toHaveAttribute("aria-invalid", "true");
+        expect(emailInput).toHaveAttribute("aria-invalid", "true");
+        expect(confirmEmailInput).toHaveAttribute("aria-invalid", "true");
+    });
+
+    await waitFor(() => {
+        fireEvent.change(nameInput, {
+            target: { name: "name", value: "Test" }
+        });
+    });
+
+    fireEvent.click(
+        screen.getByRole("button", {
+            name: /send/i
+        })
+    );
+
+    await waitFor(() => {
+        expect(nameInput).toHaveAttribute("aria-invalid", "false");
+        expect(emailInput).toHaveAttribute("aria-invalid", "true");
+        expect(confirmEmailInput).toHaveAttribute("aria-invalid", "true");
+    });
 });
 
 test("rendering form and submission failure", async () => {
@@ -81,13 +92,15 @@ test("rendering form and submission failure", async () => {
         });
     });
 
-    fireEvent.click(screen.getByText("Send"));
-
-    const submissionFailValidation = await screen.findByText(
-        "This email address is already in use"
+    fireEvent.click(
+        screen.getByRole("button", {
+            name: /send/i
+        })
     );
 
-    expect(submissionFailValidation).toBeInTheDocument();
+    await waitFor(() => {
+        expect(screen.getByTestId("error")).toBeInTheDocument();
+    });
 });
 
 test("rendering form and submission success", async () => {
@@ -111,7 +124,11 @@ test("rendering form and submission success", async () => {
         });
     });
 
-    fireEvent.click(screen.getByText("Send"));
+    fireEvent.click(
+        screen.getByRole("button", {
+            name: /send/i
+        })
+    );
 
     const submissionSuccessValidation = await screen.findByText("All Done!");
 

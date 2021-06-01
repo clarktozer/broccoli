@@ -129,7 +129,10 @@ export const RequestInviteModal: FC<RequestInviteModalProps> = ({
                                     Send
                                 </Button>
                                 {error && error.length > 0 ? (
-                                    <div className={classes.error}>
+                                    <div
+                                        className={classes.error}
+                                        data-testid="error"
+                                    >
                                         <i>{error}</i>
                                     </div>
                                 ) : null}
