@@ -30,6 +30,7 @@ export const RequestInviteModal: FC<RequestInviteModalProps> = ({
             PaperProps={{
                 className: classes.paper
             }}
+            disableBackdropClick={isLoading}
         >
             {isLoading && <OverlaySpinner />}
             <DialogTitle>Request an invite</DialogTitle>
